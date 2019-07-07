@@ -35,33 +35,57 @@ class CommandLineInterface
       key(:last_name).ask('Surname:', required: true)
       key(:email_address).ask('Email Address:', required: true)
     end 
-      c = Customer.new(**customer_attrs)
-      c.save
-      c
+    c = Customer.new(**customer_attrs)
+    c.save
+    c
   end 
 
   def user_display
-    selection = prompt.select("What would you like to do today?", %w(Search_Trips  View_Trip(s) Edit_Existing_Trips Delete_Account Exit))
-    if selection == "Search_Trips"
-      search_trips
+    selection = prompt.select("What would you like to do today?", ["Create New Trip", "View Existing Trips", "Delete Account", "Exit"])
+    if selection == "Create New Trip"
+      create_new_trip
     end
-  end 
+  end
 
-  def search_trips
-    company_selection = prompt.select("Select a company: ", %w(AA_Ski AA_Eats AA_Sails))
-      if company_selection == "AA_Ski"
-        travel_dates = prompt.collect do
-          key(:start_date).ask("Select a start date: ", required: true)
-          key(:end_date).ask("Select an end date: ", required: true) 
-      elsif 
-        company_selection == "AA_Eats"
-        travel_dates
-      else 
-        company_selection == "AA_Sails"
-        travel_dates
-      end 
+  def create_new_trip
+    # 1. Select dates & destination
+    trip_details = configure_trip_details
+
+    # 2. Choose company (with prices)
+    company_details = select_company
+
+    # 3. Confirm and book trip (and name trip)
+    book_trip(trip_details, company_details)
+  end
+
+  def configure_trip_details
+    # Write prompt for date and destination (make it return a hash of name, start_date, end_date, and destination)
+    # {name: "...", start_date: "...", end_date: "...", destination: "Thailand"}
+    prompt.collect do 
+      key(:name).ask("Name Your Trip:", required: true)
+      key(:start_date).ask("Start Date: ", required: true)
+      key(:end_date).ask("End Date: ", required: true)
     end 
-  end 
+    prompt.select("Where would you like to go?", [DESTINATIONS])
+  end
+
+  def select_company
+    # Display company options with random prices and have user select one, returning hash of company name and price
+    # {company_name: "...", price: 100}
+    prompt.select("Select a company to travel with: ", ["Go Explore", "Travel Buddy", "World Traveller"])
+  end
+
+  def book_trip(trip_details, company_details)
+    new_trip = Trip.create(
+      name: trip_details[:name],
+      start_date: trip_details[:start_date],
+      end_date: trip_details[:end_date],
+      price: 100,
+      company_id: Company.where(name: company_details[:name]).id,
+      customer_id: current_customer.id
+    )
+    puts "Trip successfully created. Your reference number is #{new_trip.id}"
+  end
 
   def run 
     greet 
