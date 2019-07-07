@@ -16,27 +16,50 @@ class CommandLineInterface
     elsif user == "No"
         create_user 
         @current_customer = create_user
-        puts "Welcome to AA Adevntures, #{@current_customer.first_name}! Your unique Customer ID is #{current_customer.id}. "
+        puts "Welcome to AA Adventures, #{@current_customer.first_name}! Your unique Customer ID is #{current_customer.id}."
     end 
   end 
 
   def user_login
     customer_info = prompt.collect do
-      key(:id).ask('Date of birth:')
-      key(:last_name).ask('Customer ID:')
+      key(:id).ask('Customer ID:')
+      key(:email_address).ask('Email Address:')
     end 
-      search_customer
+      user_display
   end 
 
   def create_user
     customer_attrs = prompt.collect do
       key(:first_name).ask('First name:', required: true)
       key(:last_name).ask('Surname:', required: true)
-      key(:date_of_birth).ask('Date of birth (MM/DD/YY):', required: true)
+      key(:email_address).ask('Email Address:', required: true)
     end 
       c = Customer.new(**customer_attrs)
       c.save
       c
+  end 
+
+  def user_display
+    selection = prompt.select("What would you like to do today?", %w(Search_Trips  View_Trip(s) Edit_Existing_Trips Delete_Account Exit))
+    if selection == "Search_Trips"
+      search_trips
+    end
+  end 
+
+  def search_trips
+    dest_selection = prompt.select("Select a company: ", %w(AA_Ski AA_Eats AA_Sails))
+      if dest_selection == "AA_Ski"
+        travel_dates = prompt.collect do
+          key(:start_date).ask("Select a start date: ", required: true)
+          key(:end_date).ask("Select an end date: ", required: true) 
+      elsif 
+        dest_selection == "AA_Eats"
+        travel_dates 
+      elsif 
+        dest_selection == "AA_Sails"
+        travel_dates
+      end 
+    end 
   end 
 
   def run 

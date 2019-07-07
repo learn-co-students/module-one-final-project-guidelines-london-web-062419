@@ -19,7 +19,7 @@ ActiveRecord::Schema.define(version: 20190706144145) do
   create_table "customers", force: :cascade do |t|
     t.string "first_name"
     t.string "last_name"
-    t.date   "date_of_birth"
+    t.string "email_address"
   end
 
   create_table "trips", force: :cascade do |t|
