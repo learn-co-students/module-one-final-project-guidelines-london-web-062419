@@ -24,6 +24,7 @@ class CommandLineInterface
     customer_info = prompt.collect do
       key(:id).ask('Customer ID:')
       key(:email_address).ask('Email Address:')
+      #TODO: authenticate email address
     end 
       user_display
   end 
@@ -47,16 +48,16 @@ class CommandLineInterface
   end 
 
   def search_trips
-    dest_selection = prompt.select("Select a company: ", %w(AA_Ski AA_Eats AA_Sails))
-      if dest_selection == "AA_Ski"
+    company_selection = prompt.select("Select a company: ", %w(AA_Ski AA_Eats AA_Sails))
+      if company_selection == "AA_Ski"
         travel_dates = prompt.collect do
           key(:start_date).ask("Select a start date: ", required: true)
           key(:end_date).ask("Select an end date: ", required: true) 
       elsif 
-        dest_selection == "AA_Eats"
-        travel_dates 
-      elsif 
-        dest_selection == "AA_Sails"
+        company_selection == "AA_Eats"
+        travel_dates
+      else 
+        company_selection == "AA_Sails"
         travel_dates
       end 
     end 
@@ -68,3 +69,4 @@ class CommandLineInterface
 
 
 end 
+
