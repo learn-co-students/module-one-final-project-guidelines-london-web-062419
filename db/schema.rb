@@ -10,6 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 0) do
+ActiveRecord::Schema.define(version: 20190706144145) do
+
+  create_table "companies", force: :cascade do |t|
+    t.string "name"
+  end
+
+  create_table "customers", force: :cascade do |t|
+    t.string "first_name"
+    t.string "last_name"
+    t.date   "date_of_birth"
+  end
+
+  create_table "trips", force: :cascade do |t|
+    t.string  "name"
+    t.date    "start_date"
+    t.date    "end_date"
+    t.integer "price"
+    t.string  "destination"
+    t.integer "customer_id"
+    t.integer "company_id"
+  end
 
 end
