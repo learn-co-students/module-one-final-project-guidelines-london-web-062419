@@ -7,7 +7,7 @@ class CommandLineInterface
   end
 
   def greet 
-    puts "Welcome to Joe's Travel App!"
+    puts "Welcome to Holibopper!"
     existing_user = prompt.select("Do you have an account with us?", %w(Yes No))
     if existing_user == "Yes"
         user_login
@@ -50,6 +50,10 @@ class CommandLineInterface
       create_new_trip
     elsif selection == "View Existing Trips"
       view_trips
+    elsif selection == "Delete Account"
+      @current_customer.delete_account
+      @prompt.keypress("Your account has been closed :(", keys: [:space, :return]) 
+       greet 
     end
   end
 
@@ -60,7 +64,7 @@ class CommandLineInterface
     # 2. Choose company (with prices)
     company_details = select_company
 
-    # 3. Confirm and book trip (and name trip)
+    # 3. Confirm and book trip 
     book_trip(trip_details, company_details)
   end
 
@@ -84,7 +88,6 @@ class CommandLineInterface
 
   def select_company
     # Display company options with random prices and have user select one, returning hash of company name and price
-    # {company_name: "...", price: 100}
     company_options = Company.all.map {|company| "#{company.name}, £#{rand(250..1000)}"}
     selection = prompt.select("Select a company to travel with: ", company_options)
     parsed_selection = selection.split(', £')
