@@ -1,19 +1,18 @@
 class CommandLineInterface 
 
-    attr_reader :prompt
-    attr_accessor :current_customer
+    attr_reader :prompt, :current_customer
 
   def initialize
     @prompt = TTY::Prompt.new
-    @current_customer = nil
   end
 
   def greet 
     puts "Welcome to Flatironpedia"
-    user = prompt.select("Do you have an account with us?", %w(Yes No))
-    if user == "Yes"
+    existing_user = prompt.select("Do you have an account with us?", %w(Yes No))
+    if existing_user == "Yes"
         user_login
-    elsif user == "No"
+        user_display
+    elsif existing_user == "No"
         @current_customer = create_user 
         puts "Welcome to Flatironpedia, #{@current_customer.first_name}! Your unique Customer ID is #{current_customer.id}."
         user_display
@@ -22,11 +21,18 @@ class CommandLineInterface
 
   def user_login
     customer_info = prompt.collect do
-      key(:id).ask('Customer ID:')
-      key(:email_address).ask('Email Address:')
+      key(:id).ask('Customer ID:', require: true)
+      key(:email_address).ask('Email Address:', require: true)
       #TODO: authenticate email address
     end 
-      user_display
+    customer = Customer.where(id: customer_info[:id], email_address: customer_info[:email_address]).last
+    if customer.nil?
+      puts "Invalid credentials! Please try again"
+      user_login
+    else 
+      puts "Login successful"
+      @current_customer = customer
+    end 
   end 
 
   def create_user
@@ -60,20 +66,29 @@ class CommandLineInterface
 
   def configure_trip_details
     # Write prompt for date and destination 
-    prompt.collect do 
-      key(:name).ask("Name Your Trip:", required: true)
+    trip_details = prompt.collect do 
+      key(:name).ask("Name Your Trip: ", required: true)
       key(:start_date).ask("Start Date: ", required: true)
       key(:end_date).ask("End Date: ", required: true)
     end 
-    prompt.select("Where would you like to go?", [DESTINATIONS.keys])
+
+    selected_destination = prompt.select("Where would you like to go?", DESTINATIONS)
+
+    {    
+      name: trip_details[:name],
+      start_date: trip_details[:start_date],
+      end_date: trip_details[:end_date],
+      destination: selected_destination 
+    }
   end
 
   def select_company
     # Display company options with random prices and have user select one, returning hash of company name and price
     # {company_name: "...", price: 100}
-    company_list = Company.all.map {|company| "#{company.name} #{company_destination_price(selected_dest)}"}
-    selection = prompt.select("Select a company to travel with: ", [company_list])
-    user_selection = Company.all.find_by(name: selection)
+    company_options = Company.all.map {|company| "#{company.name}, £#{rand(250..1000)}"}
+    selection = prompt.select("Select a company to travel with: ", company_options)
+    parsed_selection = selection.split(', £')
+    {name: parsed_selection[0], price: parsed_selection[1].to_i}
   end
 
   def book_trip(trip_details, company_details)
@@ -81,9 +96,10 @@ class CommandLineInterface
       name: trip_details[:name],
       start_date: trip_details[:start_date],
       end_date: trip_details[:end_date],
-      price: 100,
+      price: company_details[:price],
       # TODO: randomise price and associate it to each company
-      company_id: Company.where(name: company_details[:name]).id,
+      destination: trip_details[:destination],
+      company_id: Company.where(name: company_details[:name]).last.id,
       customer_id: current_customer.id
     )
     puts "Trip successfully created. Your reference number is #{new_trip.id}"
