@@ -50,6 +50,8 @@ class CommandLineInterface
     if selection == "Create New Trip"
       create_new_trip
       # TODO: Complete remainder of selections - view trip, edit trip, delete account.
+    elsif selection == "View Existing Trips"
+      view_trips
     end
   end
 
@@ -97,13 +99,18 @@ class CommandLineInterface
       start_date: trip_details[:start_date],
       end_date: trip_details[:end_date],
       price: company_details[:price],
-      # TODO: randomise price and associate it to each company
       destination: trip_details[:destination],
       company_id: Company.where(name: company_details[:name]).last.id,
       customer_id: current_customer.id
     )
     puts "Trip successfully created. Your reference number is #{new_trip.id}"
+    user_display
   end
+
+  def view_trips 
+    puts @current_customer.view_customers_trips
+     user_display
+  end 
 
   def run 
     greet 
