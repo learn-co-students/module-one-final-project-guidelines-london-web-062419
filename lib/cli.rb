@@ -14,9 +14,9 @@ class CommandLineInterface
     if user == "Yes"
         user_login
     elsif user == "No"
-        create_user 
-        @current_customer = create_user
-        puts "Welcome to AA Adventures, #{@current_customer.first_name}! Your unique Customer ID is #{current_customer.id}."
+        @current_customer = create_user 
+        puts "Welcome to Flatironpedia, #{@current_customer.first_name}! Your unique Customer ID is #{current_customer.id}."
+        user_display
     end 
   end 
 
@@ -35,8 +35,7 @@ class CommandLineInterface
       key(:last_name).ask('Surname:', required: true)
       key(:email_address).ask('Email Address:', required: true)
     end 
-    c = Customer.new(**customer_attrs)
-    c.save
+    c = Customer.create(**customer_attrs)
     c
   end 
 
@@ -44,6 +43,7 @@ class CommandLineInterface
     selection = prompt.select("What would you like to do today?", ["Create New Trip", "View Existing Trips", "Delete Account", "Exit"])
     if selection == "Create New Trip"
       create_new_trip
+      # TODO: Complete remainder of selections - view trip, edit trip, delete account.
     end
   end
 
@@ -59,8 +59,7 @@ class CommandLineInterface
   end
 
   def configure_trip_details
-    # Write prompt for date and destination (make it return a hash of name, start_date, end_date, and destination)
-    # {name: "...", start_date: "...", end_date: "...", destination: "Thailand"}
+    # Write prompt for date and destination 
     prompt.collect do 
       key(:name).ask("Name Your Trip:", required: true)
       key(:start_date).ask("Start Date: ", required: true)
@@ -72,7 +71,9 @@ class CommandLineInterface
   def select_company
     # Display company options with random prices and have user select one, returning hash of company name and price
     # {company_name: "...", price: 100}
-    prompt.select("Select a company to travel with: ", ["Go Explore", "Travel Buddy", "World Traveller"])
+    company_list = Company.all.map {|company| company.name}
+    selection = prompt.select("Select a company to travel with: ", [company_list])
+    user_selection = Company.all.find_by(name: selection)
   end
 
   def book_trip(trip_details, company_details)
@@ -81,6 +82,7 @@ class CommandLineInterface
       start_date: trip_details[:start_date],
       end_date: trip_details[:end_date],
       price: 100,
+      # TODO: randomise price and associate it to each company
       company_id: Company.where(name: company_details[:name]).id,
       customer_id: current_customer.id
     )
@@ -93,4 +95,12 @@ class CommandLineInterface
 
 
 end 
+
+
+  # def select_company
+  #   # Display company options with random prices and have user select one, returning hash of company name and price
+  #   # {company_name: "...", price: 100}
+  #   prompt.select("Select a company to travel with: ", ["#{go_explore.name}", "#{travel_buddy.name}", "#{world_traveller.name}"])
+  # end
+
 
