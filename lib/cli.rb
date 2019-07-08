@@ -7,14 +7,14 @@ class CommandLineInterface
   end
 
   def greet 
-    puts "Welcome to Flatironpedia"
+    puts "Welcome to Joe's Travel App!"
     existing_user = prompt.select("Do you have an account with us?", %w(Yes No))
     if existing_user == "Yes"
         user_login
         user_display
     elsif existing_user == "No"
         @current_customer = create_user 
-        puts "Welcome to Flatironpedia, #{@current_customer.first_name}! Your unique Customer ID is #{current_customer.id}."
+        puts "Congradulations on creating your new account, #{@current_customer.first_name}! Your unique Customer ID is #{current_customer.id}."
         user_display
     end 
   end 
@@ -23,7 +23,6 @@ class CommandLineInterface
     customer_info = prompt.collect do
       key(:id).ask('Customer ID:', require: true)
       key(:email_address).ask('Email Address:', require: true)
-      #TODO: authenticate email address
     end 
     customer = Customer.where(id: customer_info[:id], email_address: customer_info[:email_address]).last
     if customer.nil?
@@ -49,7 +48,6 @@ class CommandLineInterface
     selection = prompt.select("What would you like to do today?", ["Create New Trip", "View Existing Trips", "Delete Account", "Exit"])
     if selection == "Create New Trip"
       create_new_trip
-      # TODO: Complete remainder of selections - view trip, edit trip, delete account.
     elsif selection == "View Existing Trips"
       view_trips
     end
