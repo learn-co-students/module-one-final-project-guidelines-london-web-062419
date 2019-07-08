@@ -9,7 +9,7 @@ class CommandLineInterface
   end
 
   def greet 
-    puts "Welcome to AA Adventures"
+    puts "Welcome to Flatironpedia"
     user = prompt.select("Do you have an account with us?", %w(Yes No))
     if user == "Yes"
         user_login
@@ -65,13 +65,13 @@ class CommandLineInterface
       key(:start_date).ask("Start Date: ", required: true)
       key(:end_date).ask("End Date: ", required: true)
     end 
-    prompt.select("Where would you like to go?", [DESTINATIONS])
+    prompt.select("Where would you like to go?", [DESTINATIONS.keys])
   end
 
   def select_company
     # Display company options with random prices and have user select one, returning hash of company name and price
     # {company_name: "...", price: 100}
-    company_list = Company.all.map {|company| company.name}
+    company_list = Company.all.map {|company| "#{company.name} #{company_destination_price(selected_dest)}"}
     selection = prompt.select("Select a company to travel with: ", [company_list])
     user_selection = Company.all.find_by(name: selection)
   end
@@ -96,11 +96,5 @@ class CommandLineInterface
 
 end 
 
-
-  # def select_company
-  #   # Display company options with random prices and have user select one, returning hash of company name and price
-  #   # {company_name: "...", price: 100}
-  #   prompt.select("Select a company to travel with: ", ["#{go_explore.name}", "#{travel_buddy.name}", "#{world_traveller.name}"])
-  # end
 
 
