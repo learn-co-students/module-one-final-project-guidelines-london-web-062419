@@ -16,7 +16,7 @@ class Customer < ActiveRecord::Base
     end 
 
     def delete_account
-        self.destroy
+      self.destroy
     end 
 
 end 
