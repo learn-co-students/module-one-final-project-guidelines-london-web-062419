@@ -30,7 +30,6 @@ class CommandLineInterface
     if customer.nil?
       puts "Invalid credentials! Please try again"
       sleep 2
-      clear_screen
       user_login
     else 
       puts "Login successful"
@@ -111,6 +110,7 @@ class CommandLineInterface
   end
 
   def book_trip(trip_details, company_details)
+    # Creates a new instance of trip
     new_trip = Trip.create(
       name: trip_details[:name],
       start_date: trip_details[:start_date],
@@ -129,8 +129,6 @@ class CommandLineInterface
      user_display
   end 
 
-
-
   def select_trip_to_edit
     # Displays each trip belonging to the customer instance 
     trip_names = current_customer.trips.map {|trip| trip.name}
@@ -139,6 +137,7 @@ class CommandLineInterface
   end 
 
   def update_trip_details(trip)
+    # Prompts customer for additional updates
     trip_details = prompt.collect do 
       key(:name).ask("Name Your Trip: ")
       key(:start_date).ask("Start Date (DD-MM-YYYY): ")

@@ -11,7 +11,8 @@ class Customer < ActiveRecord::Base
          Start Date: #{trip.start_date},
          End Date: #{trip.end_date}, 
          Price: #{trip.price}, 
-         Destination: #{trip.destination}"}
+         Destination: #{trip.destination}
+         "}
         end 
     end 
 
