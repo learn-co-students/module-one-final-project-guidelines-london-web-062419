@@ -59,7 +59,6 @@ class CommandLineInterface
       update_trip_details(selected_trip)
 
       puts "Your trip has been successfully updated!"
-      binding.pry
       # TODO: Show updated values for trip
       sleep 2
       user_display
