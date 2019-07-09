@@ -64,9 +64,10 @@ class CommandLineInterface
       sleep 2
       user_display
     elsif selection == "Delete Account"
-      @current_customer.delete_account
-      @prompt.keypress("Your account has been closed :(", keys: [:space, :return]) 
-       greet 
+      current_customer.delete_account
+      puts "Your account has been closed :(" 
+      sleep 1
+      greet 
     elsif selection == "Exit"
       puts "Goodbye :-("
       sleep 2
