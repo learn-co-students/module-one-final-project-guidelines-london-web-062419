@@ -56,10 +56,10 @@ class CommandLineInterface
        view_trips
     elsif selection == "Edit Trip"
       selected_trip = select_trip_to_edit
-      puts selected_trip.attributes
       update_trip_details(selected_trip)
 
       puts "Your trip has been successfully updated!"
+      binding.pry
       # TODO: Show updated values for trip
       sleep 2
       user_display
@@ -125,19 +125,15 @@ class CommandLineInterface
     user_display
     end
 
-    # def select_trip
-    #   trip_options = Customer.view_my_trips
-    #   selection = prompt.select("Select your trip: ", trip_options)
-    #   parsed_selection = selection.split(',')
-    #   {name: parsed_selection[0]}
-    # end 
-
   def view_trips 
-    puts @current_customer.view_customers_trips
+    puts current_customer.view_customers_trips
      user_display
   end 
 
+
+
   def select_trip_to_edit
+    # Displays each trip belonging to the customer instance 
     trip_names = current_customer.trips.map {|trip| trip.name}
     selected_trip_name = prompt.select("Select a trip to edit:", trip_names)
     Trip.where(name: selected_trip_name).last
@@ -150,10 +146,11 @@ class CommandLineInterface
       key(:end_date).ask("End Date (DD-MM-YYYY): ")
     end
 
-    trip.name = trip_details[:name] unless trip_details[:name].nil?
-    trip.start_date = trip_details[:start_date] unless trip_details[:start_date].nil?
-    trip.end_date = trip_details[:end_date] unless trip_details[:end_date].nil?
+    trip.name = trip_details[:name] 
+    trip.start_date = trip_details[:start_date] 
+    trip.end_date = trip_details[:end_date] 
     trip.save
+    @current_customer = Customer.find(@current_customer.id)
   end 
 
 
@@ -163,6 +160,5 @@ class CommandLineInterface
 
 
 end 
-
 
 
