@@ -48,7 +48,7 @@ class CommandLineInterface
   end 
 
   def user_display
-    selection = prompt.select("What would you like to do today?", ["Create New Trip", "View Trips", "Edit Trip", "Delete Account", "Exit"])
+    selection = prompt.select("What would you like to do today?", ["Create New Trip", "View Trips", "Edit Trip", "Delete Trip", "Delete Account", "Exit"])
     if selection == "Create New Trip"
       create_new_trip
     elsif selection == "View Trips"
@@ -58,9 +58,11 @@ class CommandLineInterface
       update_trip_details(selected_trip)
 
       puts "Your trip has been successfully updated!"
-      # TODO: Show updated values for trip
       sleep 2
       user_display
+    elsif selection == "Delete Trip"
+      delete_trip
+      puts "Your trip has successfully been deleted."
     elsif selection == "Delete Account"
       current_customer.delete_account
       puts "Your account has been closed :(" 
@@ -129,11 +131,15 @@ class CommandLineInterface
      user_display
   end 
 
-  def select_trip_to_edit
+  def select_trip
     # Displays each trip belonging to the customer instance 
     trip_names = current_customer.trips.map {|trip| trip.name}
     selected_trip_name = prompt.select("Select a trip to edit:", trip_names)
     Trip.where(name: selected_trip_name).last
+  end 
+
+  def delete_trip
+    select_trip.destroy
   end 
 
   def update_trip_details(trip)
@@ -143,7 +149,7 @@ class CommandLineInterface
       key(:start_date).ask("Start Date (DD-MM-YYYY): ")
       key(:end_date).ask("End Date (DD-MM-YYYY): ")
     end
-
+    #gets trip equal to the new corresponding values
     trip.name = trip_details[:name] 
     trip.start_date = trip_details[:start_date] 
     trip.end_date = trip_details[:end_date] 
@@ -155,6 +161,11 @@ class CommandLineInterface
   def run 
     greet 
   end 
+
+  # Make an option to delete a trip
+  # Select which trip you want to delete 
+  # Delete trip 
+  # Send back to main menu 
 
 
 end 
